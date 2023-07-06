@@ -22,10 +22,6 @@ This project covers the following topics:
 
 - [Python](https://www.python.org/)
 - [Python Type Checking (Guide)](https://realpython.com/python-type-checking/)
-- [Python Type Checking (Video)](https://www.youtube.com/watch?v=7lmCu8wz8ro)
 - [Python Async IO (Guide)](https://realpython.com/async-io-python/)
-- [Python Async IO (Video)](https://www.youtube.com/watch?v=BI0asZuqFXM)
 - [Python Caching (Guide)](https://realpython.com/python-caching/)
-- [Python Caching (Video)](https://www.youtube.com/watch?v=KfxAreljJ-A)
 - [Python Testing (Guide)](https://realpython.com/python-testing/)
-- [Python Testing (Video)](https://www.youtube.com/watch?v=FxSsnHeWQBY)
