@@ -46,3 +46,5 @@ The following resources were used to learn about Async Comprehensions:
 - [Await](https://realpython.com/async-io-python/#await)
 - [Async Libraries](https://realpython.com/async-io-python/#async-libraries)
 - [asyncio](https://docs.python.org/3/library/asyncio.html)
+- [PEP 530 -- Asynchronous Comprehensions](https://www.python.org/dev/peps/pep-0530/)
+- [PEP 492 -- Coroutines with async and await syntax](https://www.python.org/dev/peps/pep-0492/)
