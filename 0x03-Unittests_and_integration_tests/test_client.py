@@ -24,12 +24,26 @@ class TestGithubOrgClient(unittest.TestCase):
     def test_public_repos_url(self):
         """ Test Public Repos Url property. """
         with patch('client.GithubOrgClient.org',
-                   new_callable=PropertyMock,) as mock_repo:
+                   new_callable=PropertyMock) as mock_repo:
             mock_repo.return_value = {"repos_url": "http://abc.com"}
             mock_org = GithubOrgClient("abc")
             expected = mock_repo.return_value["repos_url"]
             result = mock_org._public_repos_url
             self.assertEqual(result, expected)
+
+    @patch('client.get_json')
+    def test_public_repos(self, mock_get_json):
+        """ Test Public Repos method. """
+        mock_json = [{"name": "Test1"}, {"name": "Test2"}]
+        mock_get_json.return_value = mock_json
+        with patch('client.GithubOrgClient._public_repos_url',
+                   new_callable=PropertyMock) as mock_public:
+            mock_public.return_value = "http://abc.com"
+            mock_org = GithubOrgClient("abc")
+            result = mock_org.public_repos()
+            self.assertEqual(result, ["Test1", "Test2"])
+            mock_get_json.assert_called_once_with(mock_public.return_value)
+            mock_public.assert_called_once_with()
 
 
 if __name__ == '__main__':
