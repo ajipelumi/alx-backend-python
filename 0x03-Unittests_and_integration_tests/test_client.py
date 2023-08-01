@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """ Test client module. """
 import unittest
-from unittest.mock import patch, PropertyMock
+from unittest.mock import patch, PropertyMock, Mock
 from client import GithubOrgClient
-from parameterized import parameterized
+from fixtures import TEST_PAYLOAD
+from parameterized import parameterized, parameterized_class
 
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -53,6 +54,57 @@ class TestGithubOrgClient(unittest.TestCase):
         """ Test Has License method. """
         result = GithubOrgClient.has_license(repo, license_key)
         self.assertEqual(result, expected_result)
+
+
+@parameterized_class([
+    {
+        "org_payload": TEST_PAYLOAD[0][0],
+        "repos_payload": TEST_PAYLOAD[0][1],
+        "expected_repos": TEST_PAYLOAD[0][2],
+        "apache2_repos": TEST_PAYLOAD[0][3]
+    }
+])
+class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """ Integration test for GithubOrgClient. """
+    @classmethod
+    def setUpClass(cls):
+        """ Set up class method. """
+        # Create a dict of payloads to be used in mocked `get` requests.
+        # Key is the URL to mock, value is the JSON payload to return.
+        # The values was passed as parameterized class.
+        payloads = {
+            "https://api.github.com/orgs/google": cls.org_payload,
+            "https://api.github.com/orgs/google/repos": cls.repos_payload
+        }
+
+        # Create a function that takes a URL and returns a mock response.
+        def get_payload(url):
+            """ Get payload method. """
+            # If the URL is one of the payloads, return the associated value.
+            if url in payloads:
+                return Mock(ok=True, json=lambda: payloads[url])
+            return Mock(ok=False)
+
+        # Patch `requests.get` to return our function's mock response.
+        cls.get_patcher = patch('requests.get', side_effect=get_payload)
+        # Start patcher.
+        cls.mock_get = cls.get_patcher.start()
+
+    @classmethod
+    def tearDownClass(cls):
+        """ Tear down class method. """
+        cls.get_patcher.stop()
+
+    def test_public_repos(self):
+        """ Test Public Repos method. """
+        test_class = GithubOrgClient("google")
+        self.assertEqual(test_class.public_repos(), self.expected_repos)
+
+    def test_public_repos_with_license(self):
+        """ Test Public Repos with License method. """
+        test_class = GithubOrgClient("google")
+        self.assertEqual(test_class.public_repos("apache-2.0"),
+                         self.apache2_repos)
 
 
 if __name__ == '__main__':
